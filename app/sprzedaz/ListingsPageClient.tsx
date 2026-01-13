@@ -11,9 +11,7 @@ import {
   FileText,
   ChevronLeft,
   ChevronRight,
-  MapPin,
-  ArrowUpDown,
-  Grid3X3
+  MapPin
 } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -41,7 +39,7 @@ interface ListingsPageClientProps {
 }
 
 const categoryIcons: Record<CategoryFilter, typeof Building2> = {
-  all: Grid3X3,
+  all: FileText,
   nieruchomosci: Building2,
   ruchomosci: Car,
   wierzytelnosci: FileText
@@ -111,43 +109,42 @@ export default function ListingsPageClient({
 
       <PageHero
         title="Sprzedaż"
-        subtitle="Przeglądaj ogłoszenia nieruchomości, ruchomości i wierzytelności z postępowań restrukturyzacyjnych"
+        subtitle="Oferty z postępowań restrukturyzacyjnych"
       />
 
-      <section className="py-8 px-4 sm:px-6 lg:px-8 bg-white border-b border-gray-100">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-wrap gap-3 mb-6">
-            {(Object.keys(categoryLabels) as CategoryFilter[]).map(cat => {
-              const Icon = categoryIcons[cat];
-              const isActive = currentCategory === cat;
-              return (
-                <button
-                  key={cat}
-                  onClick={() => handleCategoryChange(cat)}
-                  className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium transition-all duration-200 border-2 ${
-                    isActive
-                      ? 'bg-gold text-dark border-gold'
-                      : 'bg-white text-brighterDark border-gray-200 hover:border-gold hover:text-dark'
-                  }`}
-                >
-                  <Icon className="w-4 h-4" />
-                  <span>{categoryLabels[cat]}</span>
-                  <span
-                    className={`ml-1 px-2 py-0.5 text-xs ${
-                      isActive ? 'bg-dark/10' : 'bg-gray-100'
+      {/* Filters Section */}
+      <section className="relative py-12 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-primary to-transparent pointer-events-none"></div>
+        <div className="max-w-6xl mx-auto relative z-10">
+          <div className="flex flex-col items-center mb-8">
+            <div className="w-12 h-0.5 bg-gold mb-6"></div>
+            <div className="flex flex-wrap justify-center gap-6">
+              {(Object.keys(categoryLabels) as CategoryFilter[]).map(cat => {
+                const isActive = currentCategory === cat;
+                return (
+                  <button
+                    key={cat}
+                    onClick={() => handleCategoryChange(cat)}
+                    className={`text-sm uppercase tracking-[0.15em] transition-all duration-300 pb-1 ${
+                      isActive
+                        ? 'text-gold border-b border-gold font-medium'
+                        : 'text-brighterDark hover:text-dark'
                     }`}
                   >
-                    {categoriesCount[cat]}
-                  </span>
-                </button>
-              );
-            })}
+                    {categoryLabels[cat]}
+                    <span className="ml-2 text-xs">
+                      ({categoriesCount[cat]})
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+            <div className="w-12 h-0.5 bg-gold mt-6"></div>
           </div>
 
           <div className="flex flex-wrap items-center justify-between gap-4">
-            <p className="text-sm text-brighterDark">
-              Znaleziono{' '}
-              <span className="font-semibold text-dark">{total}</span>{' '}
+            <p className="text-sm text-brighterDark font-light">
+              Znaleziono <span className="font-medium text-dark">{total}</span>{' '}
               {total === 1
                 ? 'ogłoszenie'
                 : total < 5
@@ -155,44 +152,59 @@ export default function ListingsPageClient({
                   : 'ogłoszeń'}
             </p>
 
-            <div className="flex items-center gap-2">
-              <ArrowUpDown className="w-4 h-4 text-brighterDark" />
-              <select
-                value={currentSort}
-                onChange={e => handleSortChange(e.target.value as SortOption)}
-                className="px-3 py-2 text-sm border border-gray-200 bg-white text-dark focus:outline-none focus:border-gold"
-              >
-                {(Object.keys(sortLabels) as SortOption[]).map(sort => (
-                  <option key={sort} value={sort}>
-                    {sortLabels[sort]}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <select
+              value={currentSort}
+              onChange={e => handleSortChange(e.target.value as SortOption)}
+              className="px-4 py-2 text-sm bg-transparent text-dark focus:outline-none border-b border-gold/30 focus:border-gold cursor-pointer"
+            >
+              {(Object.keys(sortLabels) as SortOption[]).map(sort => (
+                <option key={sort} value={sort}>
+                  {sortLabels[sort]}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
       </section>
 
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-primary">
-        <div className="max-w-7xl mx-auto">
+      {/* Listings Section */}
+      <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-primary overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-white to-transparent pointer-events-none z-20"></div>
+        <Image
+          src="/images/backgroundDesktopRight.png"
+          alt=""
+          fill
+          className="absolute inset-0 object-cover pointer-events-none select-none hidden md:block opacity-30"
+          priority
+          quality={100}
+        />
+        <Image
+          src="/images/backgroundMobileRight.png"
+          alt=""
+          fill
+          className="absolute inset-0 object-cover pointer-events-none select-none md:hidden opacity-30"
+          priority
+          quality={100}
+        />
+
+        <div className="max-w-6xl mx-auto relative z-10">
           {listings.length === 0 ? (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-center py-16"
+              className="text-center py-24"
             >
-              <div className="w-16 h-16 mx-auto bg-gray-100 rounded-full flex items-center justify-center">
-                <FileText className="w-8 h-8 text-brighterDark" />
-              </div>
-              <h3 className="text-xl font-semibold text-dark mb-2">
+              <div className="w-12 h-0.5 bg-gold mx-auto mb-8"></div>
+              <h3 className="text-2xl font-light text-dark mb-4">
                 Brak ogłoszeń
               </h3>
-              <p className="text-brighterDark">
-                Nie znaleziono ogłoszeń spełniających kryteria wyszukiwania.
+              <p className="text-brighterDark font-light">
+                Nie znaleziono ogłoszeń spełniających kryteria.
               </p>
+              <div className="w-12 h-0.5 bg-gold mx-auto mt-8"></div>
             </motion.div>
           ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid md:grid-cols-2 gap-6">
               {listings.map((listing, index) => (
                 <ListingCardComponent
                   key={listing._id}
@@ -208,58 +220,63 @@ export default function ListingsPageClient({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="mt-12 flex justify-center items-center gap-2"
+              className="mt-16 flex justify-center items-center gap-4"
             >
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="p-2 border border-gray-200 bg-white text-dark disabled:opacity-50 disabled:cursor-not-allowed hover:border-gold transition-colors"
+                className="p-2 text-dark disabled:opacity-30 disabled:cursor-not-allowed hover:text-gold transition-colors"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
 
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => {
-                const showPage =
-                  page === 1 ||
-                  page === totalPages ||
-                  Math.abs(page - currentPage) <= 1;
+              <div className="flex items-center gap-2">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  page => {
+                    const showPage =
+                      page === 1 ||
+                      page === totalPages ||
+                      Math.abs(page - currentPage) <= 1;
 
-                if (!showPage) {
-                  if (page === 2 || page === totalPages - 1) {
+                    if (!showPage) {
+                      if (page === 2 || page === totalPages - 1) {
+                        return (
+                          <span key={page} className="px-1 text-brighterDark">
+                            ·
+                          </span>
+                        );
+                      }
+                      return null;
+                    }
+
                     return (
-                      <span key={page} className="px-2 text-brighterDark">
-                        ...
-                      </span>
+                      <button
+                        key={page}
+                        onClick={() => handlePageChange(page)}
+                        className={`w-8 h-8 text-sm transition-colors ${
+                          currentPage === page
+                            ? 'text-gold font-medium'
+                            : 'text-brighterDark hover:text-dark'
+                        }`}
+                      >
+                        {page}
+                      </button>
                     );
                   }
-                  return null;
-                }
-
-                return (
-                  <button
-                    key={page}
-                    onClick={() => handlePageChange(page)}
-                    className={`w-10 h-10 text-sm font-medium transition-colors ${
-                      currentPage === page
-                        ? 'bg-gold text-dark'
-                        : 'bg-white border border-gray-200 text-brighterDark hover:border-gold'
-                    }`}
-                  >
-                    {page}
-                  </button>
-                );
-              })}
+                )}
+              </div>
 
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className="p-2 border border-gray-200 bg-white text-dark disabled:opacity-50 disabled:cursor-not-allowed hover:border-gold transition-colors"
+                className="p-2 text-dark disabled:opacity-30 disabled:cursor-not-allowed hover:text-gold transition-colors"
               >
                 <ChevronRight className="w-5 h-5" />
               </button>
             </motion.div>
           )}
         </div>
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white via-white/50 to-transparent pointer-events-none z-20"></div>
       </section>
 
       <Footer />
@@ -303,54 +320,66 @@ function ListingCardComponent({
   const extraInfo = getExtraInfo();
 
   return (
-    <article className="group bg-white border-l-2 border-gold shadow-sm hover:shadow-lg transition-all duration-300">
-      <Link href={`/sprzedaz/${listing.slug.current}`}>
-        <div className="relative h-56 overflow-hidden">
+    <motion.article
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5, delay: index * 0.05 }}
+      className="group bg-white border-l-2 border-gold"
+    >
+      <Link
+        href={`/sprzedaz/${listing.slug.current}`}
+        className="flex flex-col sm:flex-row"
+      >
+        <div className="relative w-full sm:w-48 md:w-56 h-48 sm:h-auto sm:min-h-[180px] shrink-0 overflow-hidden">
           {listing.mainImage ? (
             <Image
               src={urlFor(listing.mainImage).width(600).height(400).url()}
               alt={listing.mainImage.alt || listing.title}
               fill
-              className="object-cover transition-transform duration-500"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="object-cover"
+              sizes="(max-width: 640px) 100vw, 224px"
             />
           ) : (
-            <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-              <Icon className="w-12 h-12 text-gray-300" />
+            <div className="w-full h-full bg-gray-50 flex items-center justify-center">
+              <Icon className="w-10 h-10 text-gray-200" />
             </div>
           )}
-          <div className="absolute top-4 left-4 px-3 py-1 bg-gold text-dark text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5">
-            <Icon className="w-3.5 h-3.5" />
-            {categoryLabels[listing.category]}
-          </div>
         </div>
 
-        <div className="p-6">
-          <h3 className="text-lg font-semibold text-dark mb-2 line-clamp-2">
-            {listing.title}
-          </h3>
+        <div className="p-5 flex flex-col flex-1 justify-between">
+          <div>
+            <span className="text-xs uppercase tracking-[0.15em] text-gold font-medium">
+              {categoryLabels[listing.category]}
+            </span>
+            <h3 className="text-base font-normal text-dark mt-2 mb-2 line-clamp-2 group-hover:text-gold transition-colors">
+              {listing.title}
+            </h3>
 
-          {listing.location && (
-            <p className="flex items-center gap-1.5 text-sm text-brighterDark mb-3">
-              <MapPin className="w-4 h-4 text-gold" />
-              {listing.location}
-            </p>
-          )}
+            {listing.location && (
+              <p className="flex items-center gap-2 text-sm text-brighterDark font-light mb-1">
+                <MapPin className="w-3.5 h-3.5 text-gold" />
+                <span className="font-normal">{listing.location}</span>
+              </p>
+            )}
 
-          {extraInfo && (
-            <p className="text-sm text-brighterDark mb-4">{extraInfo}</p>
-          )}
+            {extraInfo && (
+              <p className="text-sm text-brighterDark font-light">
+                {extraInfo}
+              </p>
+            )}
+          </div>
 
-          <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-            <span className="text-xl font-bold text-dark">
+          <div className="flex items-center justify-between pt-3 mt-3 border-t border-gold/20">
+            <span className="text-lg font-normal text-dark">
               {formatPrice(listing.price)}
             </span>
-            <span className="text-sm text-gold font-medium">
-              Zobacz szczegóły →
+            <span className="text-xs text-gold font-light tracking-wide opacity-0 group-hover:opacity-100 transition-opacity">
+              Zobacz więcej →
             </span>
           </div>
         </div>
       </Link>
-    </article>
+    </motion.article>
   );
 }

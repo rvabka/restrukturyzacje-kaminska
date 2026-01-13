@@ -99,7 +99,7 @@ const Navbar = () => {
               O mnie
             </Link>
             <Link
-              href="/"
+              href="/aktualnosci"
               className="text-dark hover:text-gold transition-colors duration-200 font-medium text-[15px]"
             >
               Aktualności
@@ -195,7 +195,7 @@ const Navbar = () => {
                 O mnie
               </Link>
               <Link
-                href="/"
+                href="/aktualnosci"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="block text-dark hover:text-gold transition-colors duration-200 font-medium py-2"
               >

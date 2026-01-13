@@ -77,7 +77,6 @@ export type CategoryFilter =
   | 'ruchomosci'
   | 'wierzytelnosci';
 
-
 const listingsBaseFilter = `_type == "listing" && isActive == true && ($category == "all" || category == $category)`;
 
 const listingsProjection = `{
@@ -272,3 +271,128 @@ export const debtorTypeLabels: Record<string, string> = {
   przedsiebiorstwo: 'Przedsiębiorstwo',
   spolka: 'Spółka'
 };
+
+// =============================================
+// === POSTS (AKTUALNOŚCI) ===
+// =============================================
+
+export interface PostCard {
+  _id: string;
+  title: string;
+  slug: { current: string };
+  publishedAt: string;
+  excerpt?: string;
+  author?: string;
+  mainImage?: SanityImage;
+}
+
+export interface PostFull extends PostCard {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  body: any[];
+  seoTitle?: string;
+  seoDescription?: string;
+  seoKeywords?: string[];
+  ogImage?: SanityImage;
+}
+
+export interface PostsResult {
+  posts: PostCard[];
+  total: number;
+}
+
+// Pobierz listę postów z paginacją
+export const postsQuery = groq`{
+  "posts": *[_type == "post" && isPublished == true] | order(publishedAt desc) [$start...$end] {
+    _id,
+    title,
+    slug,
+    publishedAt,
+    excerpt,
+    author,
+    mainImage {
+      asset,
+      alt,
+      hotspot
+    }
+  },
+  "total": count(*[_type == "post" && isPublished == true])
+}`;
+
+// Pobierz wszystkie posty (bez paginacji, do małych list)
+export const allPostsQuery = groq`*[_type == "post" && isPublished == true] | order(publishedAt desc) {
+  _id,
+  title,
+  slug,
+  publishedAt,
+  excerpt,
+  author,
+  mainImage {
+    asset,
+    alt,
+    hotspot
+  }
+}`;
+
+// Pobierz pojedynczy post po slug
+export const postBySlugQuery = groq`*[
+  _type == "post"
+  && slug.current == $slug
+  && isPublished == true
+][0] {
+  _id,
+  title,
+  slug,
+  publishedAt,
+  excerpt,
+  author,
+  mainImage {
+    asset,
+    alt,
+    hotspot
+  },
+  body,
+  seoTitle,
+  seoDescription,
+  seoKeywords,
+  ogImage {
+    asset,
+    alt
+  }
+}`;
+
+// Wszystkie slugi postów (dla generateStaticParams)
+export const allPostSlugsQuery = groq`*[
+  _type == "post"
+  && isPublished == true
+  && defined(slug.current)
+].slug.current`;
+
+// Pobierz powiązane posty (inne niż bieżący)
+export const relatedPostsQuery = groq`*[
+  _type == "post"
+  && isPublished == true
+  && _id != $currentId
+] | order(publishedAt desc) [0...3] {
+  _id,
+  title,
+  slug,
+  publishedAt,
+  excerpt,
+  mainImage {
+    asset,
+    alt,
+    hotspot
+  }
+}`;
+
+// Liczba postów (dla paginacji)
+export const postsCountQuery = groq`count(*[_type == "post" && isPublished == true])`;
+
+// Parametry paginacji dla postów
+export const POSTS_PER_PAGE = 9;
+
+export function getPostsPaginationParams(page: number) {
+  const start = (page - 1) * POSTS_PER_PAGE;
+  const end = start + POSTS_PER_PAGE;
+  return { start, end };
+}
