@@ -149,7 +149,7 @@ export default function UpadloscKonsumenckaPage() {
               showArrow
               className="text-base"
             >
-              Skontaktuj się
+              Bezpłatna konsultacja
             </Button>
           </motion.div>
         </div>

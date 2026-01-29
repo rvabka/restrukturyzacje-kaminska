@@ -216,10 +216,10 @@ export default function ONasPage() {
             className="mb-16"
           >
             <span className="text-sm uppercase tracking-[0.2em] text-gold font-semibold">
-              Nasze podstawy
+              Moje podstawy
             </span>
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-light text-dark mt-2 tracking-tight">
-              Nasze <span className="font-semibold">wartości</span>
+              Moje <span className="font-semibold">wartości</span>
             </h2>
           </motion.div>
 
@@ -256,74 +256,6 @@ export default function ONasPage() {
                 </motion.div>
               );
             })}
-          </div>
-        </div>
-      </section>
-
-      <section className="py-32 px-4 sm:px-6 lg:px-8 bg-white">
-        <div className="max-w-4xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="mb-16"
-          >
-            <span className="text-sm uppercase tracking-[0.2em] text-gold font-semibold">
-              Moja droga
-            </span>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-light text-dark mt-2 tracking-tight">
-              Doświadczenie <span className="font-semibold">zawodowe</span>
-            </h2>
-          </motion.div>
-
-          <div className="space-y-12">
-            {timeline.map((item, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, x: -30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.2, delay: index * 0.2 }}
-                className="flex gap-8"
-              >
-                <div className="shrink-0">
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    whileInView={{ scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.1, delay: index * 0.2 + 0.2 }}
-                    className="w-4 h-4 bg-gold mt-2"
-                  />
-                  {index < timeline.length - 1 && (
-                    <motion.div
-                      initial={{ scaleY: 0 }}
-                      whileInView={{ scaleY: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.4, delay: index * 0.2 + 0.4 }}
-                      className="w-0.5 h-full bg-gold/30 ml-1.5 mt-2 origin-top"
-                    />
-                  )}
-                </div>
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.2, delay: index * 0.2 + 0.3 }}
-                  className="pb-4"
-                >
-                  <p className="text-gold font-semibold text-sm uppercase tracking-wider mb-2">
-                    {item.year}
-                  </p>
-                  <h3 className="text-2xl font-semibold text-dark mb-3">
-                    {item.title}
-                  </h3>
-                  <p className="text-brighterDark leading-relaxed">
-                    {item.description}
-                  </p>
-                </motion.div>
-              </motion.div>
-            ))}
           </div>
         </div>
       </section>

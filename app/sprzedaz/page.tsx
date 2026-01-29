@@ -12,7 +12,7 @@ import {
 import ListingsPageClient from './ListingsPageClient';
 
 export const metadata: Metadata = {
-  title: 'Sprzedaż | Kancelaria Restrukturyzacyjna Karolina  Kamińska',
+  title: 'Sprzedaż | Kancelaria Restrukturyzacyjna Karolina Kamińska',
   description:
     'Przeglądaj ogłoszenia sprzedaży nieruchomości, ruchomości i wierzytelności z postępowań restrukturyzacyjnych i upadłościowych. Profesjonalna obsługa prawna w Lublinie.',
   keywords: [
@@ -29,6 +29,9 @@ export const metadata: Metadata = {
       'Przeglądaj ogłoszenia sprzedaży nieruchomości, ruchomości i wierzytelności z postępowań restrukturyzacyjnych i upadłościowych.',
     type: 'website',
     locale: 'pl_PL'
+  },
+  alternates: {
+    canonical: '/sprzedaz'
   }
 };
 
@@ -61,6 +64,25 @@ async function getCategoriesCount(): Promise<Record<CategoryFilter, number>> {
   return client.fetch(categoriesCountQuery);
 }
 
+function generateListJsonLd(listings: ListingsResult['listings']) {
+  const baseUrl =
+    process.env.NEXT_PUBLIC_SITE_URL || 'https://restrukturyzacje-kaminska.pl';
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Ogłoszenia sprzedaży z postępowań restrukturyzacyjnych i upadłościowych',
+    description: 'Lista nieruchomości, ruchomości i wierzytelności na sprzedaż',
+    numberOfItems: listings.length,
+    itemListElement: listings.slice(0, 10).map((listing, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      url: `${baseUrl}/sprzedaz/${listing.slug.current}`,
+      name: listing.title
+    }))
+  };
+}
+
 export default async function SprzedazPage({ searchParams }: PageProps) {
   const params = await searchParams;
 
@@ -74,16 +96,23 @@ export default async function SprzedazPage({ searchParams }: PageProps) {
   ]);
 
   const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
+  const jsonLd = generateListJsonLd(listings);
 
   return (
-    <ListingsPageClient
-      listings={listings}
-      total={total}
-      totalPages={totalPages}
-      currentPage={page}
-      currentCategory={category}
-      currentSort={sort}
-      categoriesCount={categoriesCount}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <ListingsPageClient
+        listings={listings}
+        total={total}
+        totalPages={totalPages}
+        currentPage={page}
+        currentCategory={category}
+        currentSort={sort}
+        categoriesCount={categoriesCount}
+      />
+    </>
   );
 }

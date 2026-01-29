@@ -150,8 +150,13 @@ export default function RestrukturyzacjaFirmPage() {
               Zapraszamy do kontaktu. Wspólnie przeanalizujemy Twoją sytuację i
               znajdziemy optymalne rozwiązanie prawne.
             </p>
-            <Button href="/kontakt" variant="outline" showArrow className="text-base">
-              Skontaktuj się
+            <Button
+              href="/kontakt"
+              variant="outline"
+              showArrow
+              className="text-base"
+            >
+              Bezpłatna konsultacja
             </Button>
           </motion.div>
         </div>

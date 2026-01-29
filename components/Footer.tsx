@@ -56,23 +56,39 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  href="/"
+                  href="/uslugi/restrukturyzacja-firm"
                   className="text-brighterDark hover:text-gold transition-colors duration-200 text-sm"
                 >
-                  Usługi
+                  Restrukturyzacja firm
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/o-nas"
+                  href="/uslugi/upadlosc-konsumencka"
                   className="text-brighterDark hover:text-gold transition-colors duration-200 text-sm"
                 >
-                  O Nas
+                  Upadłość konsumencka
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/"
+                  href="/uslugi/upadlosc-gospodarcza"
+                  className="text-brighterDark hover:text-gold transition-colors duration-200 text-sm"
+                >
+                  Upadłość gospodarcza
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/o-mnie"
+                  className="text-brighterDark hover:text-gold transition-colors duration-200 text-sm"
+                >
+                  O mnie
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/aktualnosci"
                   className="text-brighterDark hover:text-gold transition-colors duration-200 text-sm"
                 >
                   Aktualności
@@ -80,10 +96,10 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  href="/"
+                  href="/sprzedaz"
                   className="text-brighterDark hover:text-gold transition-colors duration-200 text-sm"
                 >
-                  Komunikaty
+                  Sprzedaż
                 </Link>
               </li>
               <li>

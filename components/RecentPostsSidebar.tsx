@@ -31,7 +31,6 @@ export default function RecentPostsSidebar({
   posts,
   currentPostId
 }: RecentPostsSidebarProps) {
-  // Filtruj bieżący post i weź max 4
   const filteredPosts = posts
     .filter(post => post._id !== currentPostId)
     .slice(0, 4);

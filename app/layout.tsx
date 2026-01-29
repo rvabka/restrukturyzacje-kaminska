@@ -10,11 +10,39 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: 'Restrukturyzacje Karolina Kamińska - Kancelaria Restrukturyzacyjna',
+  title: {
+    default:
+      'Kancelaria Restrukturyzacyjna Kamińska | Restrukturyzacja i Upadłość Lublin',
+    template: '%s | Kancelaria Kamińska'
+  },
   description:
-    'Profesjonalna pomoc w restrukturyzacji firm, upadłości konsumenckiej i gospodarczej, mediacje oraz kompleksowa obsługa prawna przedsiębiorstw.',
+    'Kancelaria Restrukturyzacyjna Karoliny Kamińskiej w Lublinie. Restrukturyzacja firm, upadłość konsumencka i gospodarcza. Licencjonowany doradca restrukturyzacyjny. Bezpłatna konsultacja.',
   keywords:
-    'restrukturyzacja, upadłość konsumencka, upadłość gospodarcza, mediacje, obsługa firm, adwokat'
+    'kancelaria restrukturyzacyjna Lublin, doradca restrukturyzacyjny, restrukturyzacja firm, upadłość konsumencka Lublin, upadłość gospodarcza, oddłużanie, adwokat Lublin',
+  authors: [{ name: 'Karolina Kamińska' }],
+  creator: 'Kancelaria Restrukturyzacyjna Kamińska',
+  openGraph: {
+    title: 'Kancelaria Restrukturyzacyjna Kamińska | Lublin',
+    description:
+      'Restrukturyzacja firm, upadłość konsumencka i gospodarcza. Licencjonowany doradca restrukturyzacyjny. Bezpłatna konsultacja.',
+    type: 'website',
+    locale: 'pl_PL',
+    siteName: 'Kancelaria Restrukturyzacyjna Kamińska'
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1
+    }
+  },
+  verification: {
+    // google: 'your-google-verification-code', // Dodaj po weryfikacji w Google Search Console
+  }
 };
 
 export default function RootLayout({

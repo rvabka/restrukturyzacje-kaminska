@@ -81,9 +81,9 @@ const Hero = () => {
               className="flex flex-col sm:flex-row gap-4 pt-4"
             >
               <Button href="/kontakt" variant="primary" showArrow>
-                Umów konsultację
+                Bezpłatna konsultacja
               </Button>
-              <Button href="/uslugi" variant="outline">
+              <Button href="#uslugi" variant="outline">
                 Poznaj usługi
               </Button>
             </motion.div>

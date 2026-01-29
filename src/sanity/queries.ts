@@ -217,6 +217,29 @@ export const relatedListingsQuery = groq`*[
   condition
 }`;
 
+// Ostatnie ogłoszenia (dla strony głównej)
+export const recentListingsQuery = groq`*[
+  _type == "listing"
+  && isActive == true
+] | order(publishedAt desc) [0...6] {
+  _id,
+  title,
+  slug,
+  category,
+  price,
+  publishedAt,
+  mainImage {
+    asset,
+    alt,
+    hotspot
+  },
+  location,
+  area,
+  propertyType,
+  nominalValue,
+  condition
+}`;
+
 // Liczba ogłoszeń per kategoria (dla filtrów)
 export const categoriesCountQuery = groq`{
   "all": count(*[_type == "listing" && isActive == true]),

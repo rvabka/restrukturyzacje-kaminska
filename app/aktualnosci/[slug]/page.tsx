@@ -28,7 +28,7 @@ export async function generateMetadata({
 
   if (!post) {
     return {
-      title: 'Artykuł nie znaleziony | Kancelaria Restrukturyzacje'
+      title: 'Artykuł nie znaleziony | Kancelaria Restrukturyzacyjna Kamińska'
     };
   }
 
@@ -40,7 +40,7 @@ export async function generateMetadata({
   return {
     title:
       post.seoTitle ||
-      `${post.title} | Aktualności | Kancelaria Restrukturyzacje`,
+      `${post.title} | Aktualności | Kancelaria Restrukturyzacyjna Kamińska`,
     description:
       post.seoDescription ||
       post.excerpt ||
@@ -69,6 +69,9 @@ export async function generateMetadata({
       title: post.seoTitle || post.title,
       description: post.seoDescription || post.excerpt,
       images: ogImageUrl ? [ogImageUrl] : undefined
+    },
+    alternates: {
+      canonical: `/aktualnosci/${slug}`
     }
   };
 }
@@ -89,6 +92,8 @@ export default async function PostPage({ params }: PageProps) {
 
   // JSON-LD Schema
   const ogImage = post.ogImage || post.mainImage;
+  const baseUrl =
+    process.env.NEXT_PUBLIC_SITE_URL || 'https://restrukturyzacje-kaminska.pl';
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'NewsArticle',
@@ -97,20 +102,20 @@ export default async function PostPage({ params }: PageProps) {
     datePublished: post.publishedAt,
     dateModified: post.publishedAt,
     author: {
-      '@type': 'Organization',
-      name: post.author || 'Kancelaria Restrukturyzacje'
+      '@type': 'Person',
+      name: post.author || 'Karolina Kamińska'
     },
     publisher: {
       '@type': 'Organization',
-      name: 'Kancelaria Restrukturyzacje',
+      name: 'Kancelaria Restrukturyzacyjna Kamińska',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://restrukturyzacje-kaminska.pl/logo.png'
+        url: `${baseUrl}/images/logo.webp`
       }
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `https://restrukturyzacje-kaminska.pl/aktualnosci/${slug}`
+      '@id': `${baseUrl}/aktualnosci/${slug}`
     },
     image: ogImage ? urlFor(ogImage).width(1200).height(630).url() : undefined
   };
