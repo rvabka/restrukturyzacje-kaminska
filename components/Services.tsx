@@ -54,6 +54,7 @@ const Services = () => {
         src="/images/backgroundDesktopLeft.png"
         alt=""
         fill
+        sizes="100vw"
         className="absolute inset-0 object-cover pointer-events-none select-none hidden md:block"
         priority
         quality={100}
@@ -64,6 +65,7 @@ const Services = () => {
         src="/images/backgroundMobileLeft.png"
         alt=""
         fill
+        sizes="100vw"
         className="absolute inset-0 object-cover pointer-events-none select-none md:hidden"
         priority
         quality={100}

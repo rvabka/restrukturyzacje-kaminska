@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { FileX } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import ScrollToTop from '@/components/ScrollToTop';
 
 export default function NotFound() {
   return (
@@ -25,6 +26,8 @@ export default function NotFound() {
           </Link>
         </div>
       </div>
+      <Footer />
+      <ScrollToTop />
     </main>
   );
 }

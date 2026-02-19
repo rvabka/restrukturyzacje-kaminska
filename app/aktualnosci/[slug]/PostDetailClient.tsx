@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { PortableText, PortableTextComponents } from '@portabletext/react';
 import {
   ArrowLeft,
@@ -16,7 +17,7 @@ import {
   Link as LinkIcon,
   Check
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ScrollToTop from '@/components/ScrollToTop';
@@ -167,9 +168,14 @@ export default function PostDetailClient({
   relatedPosts
 }: PostDetailClientProps) {
   const [copied, setCopied] = useState(false);
+  const [shareUrl, setShareUrl] = useState('');
+  const router = useRouter();
   const readTime = calculateReadTime(post.body, post.excerpt);
 
-  const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
+  useEffect(() => {
+    setShareUrl(window.location.href);
+  }, []);
+
   const shareTitle = post.title;
 
   const handleCopyLink = async () => {
@@ -179,6 +185,14 @@ export default function PostDetailClient({
       setTimeout(() => setCopied(false), 2000);
     } catch {
       // Fallback
+    }
+  };
+
+  const handleGoBack = () => {
+    if (window.history.length > 1) {
+      router.back();
+    } else {
+      router.push('/aktualnosci');
     }
   };
 
@@ -194,96 +208,101 @@ export default function PostDetailClient({
     <main className="min-h-screen">
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="relative min-h-[60vh] flex items-end justify-center overflow-hidden">
-        {post.mainImage ? (
-          <Image
-            src={urlFor(post.mainImage).width(1920).height(1080).url()}
-            alt={post.mainImage.alt || post.title}
-            fill
-            className="object-cover"
-            priority
-            sizes="100vw"
-          />
-        ) : (
-          <div className="absolute inset-0 bg-dark" />
-        )}
-
-        <div className="absolute inset-0 bg-gradient-to-t from-dark via-dark/70 to-dark/30" />
-
-        <div className="relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-            className="mb-8"
+      {/* Back Navigation */}
+      <div
+        className="bg-white px-4 sm:px-6 lg:px-8 relative"
+        style={{ paddingTop: '6rem' }}
+      >
+        <div className="max-w-4xl mx-auto py-4">
+          <Link
+            href="/aktualnosci"
+            className="inline-flex items-center gap-2 text-sm text-brighterDark hover:text-gold transition-colors font-light relative z-[51]"
           >
-            <Link
-              href="/aktualnosci"
-              className="inline-flex items-center gap-2 text-sm text-white/80 hover:text-gold transition-colors font-light"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Powrót do aktualności
-            </Link>
-          </motion.div>
+            <ArrowLeft className="w-4 h-4" />
+            Powrót do aktualności
+          </Link>
+        </div>
+      </div>
 
+      {/* Header Section */}
+      <section className="relative py-6 sm:py-12 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-4xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="flex flex-wrap items-center gap-4 mb-6"
+            transition={{ duration: 0.6 }}
           >
-            <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-gold" />
-              <time
-                dateTime={post.publishedAt}
-                className="text-sm text-white/80 font-light"
-              >
-                {formatDate(post.publishedAt)}
-              </time>
+            {/* Meta info */}
+            <div className="flex flex-wrap items-center gap-4 mb-6">
+              <div className="flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-gold" />
+                <time
+                  dateTime={post.publishedAt}
+                  className="text-sm text-brighterDark font-light"
+                >
+                  {formatDate(post.publishedAt)}
+                </time>
+              </div>
+              <div className="w-1 h-1 rounded-full bg-gold/40" />
+              <div className="flex items-center gap-2">
+                <Clock className="w-4 h-4 text-gold" />
+                <span className="text-sm text-brighterDark font-light">
+                  {readTime} min czytania
+                </span>
+              </div>
+              {post.author && (
+                <>
+                  <div className="w-1 h-1 rounded-full bg-gold/40" />
+                  <div className="flex items-center gap-2">
+                    <User className="w-4 h-4 text-gold" />
+                    <span className="text-sm text-brighterDark font-light">
+                      {post.author}
+                    </span>
+                  </div>
+                </>
+              )}
             </div>
-            <div className="w-1 h-1 rounded-full bg-gold/50" />
-            <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4 text-gold" />
-              <span className="text-sm text-white/80 font-light">
-                {readTime} min czytania
-              </span>
-            </div>
-            {post.author && (
-              <>
-                <div className="w-1 h-1 rounded-full bg-gold/50" />
-                <div className="flex items-center gap-2">
-                  <User className="w-4 h-4 text-gold" />
-                  <span className="text-sm text-white/80 font-light">
-                    {post.author}
-                  </span>
-                </div>
-              </>
-            )}
-          </motion.div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-white leading-tight"
-          >
-            {post.title}
-          </motion.h1>
+            {/* Title */}
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-light text-dark leading-tight tracking-tight mb-2">
+              {post.title}
+            </h1>
+            <div className="w-16 h-0.5 bg-gold mt-6" />
+          </motion.div>
         </div>
       </section>
 
-      {/* Excerpt */}
-      <section className="relative py-16 px-4 sm:px-6 lg:px-8 bg-primary">
-        <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-dark/20 to-transparent pointer-events-none" />
+      {/* Hero Image */}
+      {post.mainImage && (
+        <section className="px-4 sm:px-6 lg:px-8 bg-white pb-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.15 }}
+            className="max-w-4xl mx-auto"
+          >
+            <div className="relative aspect-[21/9] overflow-hidden border-l-2 border-gold">
+              <Image
+                src={urlFor(post.mainImage).width(1400).height(600).url()}
+                alt={post.mainImage.alt || post.title}
+                fill
+                className="object-cover"
+                priority
+                sizes="(max-width: 768px) 100vw, 896px"
+              />
+            </div>
+          </motion.div>
+        </section>
+      )}
 
-        <div className="max-w-4xl mx-auto relative z-10">
-          {post.excerpt && (
+      {post.excerpt && (
+        <section className="relative py-8 sm:py-12 px-4 sm:px-6 lg:px-8 bg-primary">
+          <div className="max-w-3xl mx-auto relative z-10">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.2 }}
+              transition={{ duration: 0.4 }}
               className="text-center"
             >
               <div className="w-12 h-0.5 bg-gold mx-auto mb-8" />
@@ -292,43 +311,168 @@ export default function PostDetailClient({
               </p>
               <div className="w-12 h-0.5 bg-gold mx-auto mt-8" />
             </motion.div>
-          )}
-        </div>
-      </section>
+          </div>
+        </section>
+      )}
 
       {/* Article Content */}
-      <section className="relative py-16 px-4 sm:px-6 lg:px-8 bg-white">
-        <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-primary to-transparent pointer-events-none z-10" />
+      <section
+        className={`relative py-10 sm:py-16 px-4 sm:px-6 lg:px-8 bg-white ${post.excerpt ? '' : 'mt-0'}`}
+      >
+        {post.excerpt && (
+          <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-primary to-transparent pointer-events-none z-10" />
+        )}
 
-        <div className="max-w-3xl mx-auto relative z-20">
-          <motion.article
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <div className="prose prose-lg max-w-none">
-              <PortableText
-                value={post.body}
-                components={portableTextComponents}
-              />
-            </div>
+        <div className="max-w-5xl mx-auto relative z-20">
+          <div className="grid lg:grid-cols-[1fr_280px] gap-12">
+            {/* Main Content */}
+            <motion.article
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              <div className="prose prose-lg max-w-none">
+                <PortableText
+                  value={post.body}
+                  components={portableTextComponents}
+                />
+              </div>
 
-            {/* Share Section */}
-            <div className="mt-16 pt-8 border-t border-gray-100">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2 text-brighterDark">
-                    <Share2 className="w-4 h-4" />
-                    <span className="text-sm font-light">Udostępnij:</span>
+              {/* Share Section */}
+              <div className="mt-16 pt-8 border-t border-gray-100">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2 text-brighterDark">
+                      <Share2 className="w-4 h-4" />
+                      <span className="text-sm font-light">Udostępnij:</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <a
+                        href={shareLinks.facebook}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-9 h-9 flex items-center justify-center border border-gray-200 text-brighterDark hover:text-gold hover:border-gold transition-colors"
+                        aria-label="Udostępnij na Facebook"
+                      >
+                        <Facebook className="w-4 h-4" />
+                      </a>
+                      <a
+                        href={shareLinks.twitter}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-9 h-9 flex items-center justify-center border border-gray-200 text-brighterDark hover:text-gold hover:border-gold transition-colors"
+                        aria-label="Udostępnij na Twitter"
+                      >
+                        <Twitter className="w-4 h-4" />
+                      </a>
+                      <a
+                        href={shareLinks.linkedin}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-9 h-9 flex items-center justify-center border border-gray-200 text-brighterDark hover:text-gold hover:border-gold transition-colors"
+                        aria-label="Udostępnij na LinkedIn"
+                      >
+                        <Linkedin className="w-4 h-4" />
+                      </a>
+                      <button
+                        onClick={handleCopyLink}
+                        className="w-9 h-9 flex items-center justify-center border border-gray-200 text-brighterDark hover:text-gold hover:border-gold transition-colors"
+                        aria-label="Kopiuj link"
+                      >
+                        {copied ? (
+                          <Check className="w-4 h-4 text-green-600" />
+                        ) : (
+                          <LinkIcon className="w-4 h-4" />
+                        )}
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
+                </div>
+              </div>
+            </motion.article>
+
+            {/* Sidebar */}
+            <aside className="hidden lg:block">
+              <div className="sticky top-28 space-y-8">
+                {/* Author Card */}
+                {post.author && (
+                  <motion.div
+                    initial={{ opacity: 0, x: 20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                    className="bg-primary p-6 border-l-2 border-gold"
+                  >
+                    <p className="text-xs text-brighterDark font-light uppercase tracking-[0.15em] mb-3">
+                      Autor
+                    </p>
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-white flex items-center justify-center border border-gold/20">
+                        <span className="text-sm text-dark font-medium">
+                          {post.author.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-dark">
+                          {post.author}
+                        </p>
+                        <p className="text-xs text-brighterDark font-light">
+                          Kancelaria Restrukturyzacyjna
+                        </p>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Article Info */}
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                  className="bg-primary p-6 border-l-2 border-gold"
+                >
+                  <p className="text-xs text-brighterDark font-light uppercase tracking-[0.15em] mb-4">
+                    Informacje
+                  </p>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                      <Calendar className="w-4 h-4 text-gold flex-shrink-0" />
+                      <time
+                        dateTime={post.publishedAt}
+                        className="text-sm text-dark font-light"
+                      >
+                        {formatDate(post.publishedAt)}
+                      </time>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Clock className="w-4 h-4 text-gold flex-shrink-0" />
+                      <span className="text-sm text-dark font-light">
+                        {readTime} min czytania
+                      </span>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Share Sidebar */}
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.4 }}
+                  className="bg-primary p-6 border-l-2 border-gold"
+                >
+                  <p className="text-xs text-brighterDark font-light uppercase tracking-[0.15em] mb-4">
+                    Udostępnij
+                  </p>
+                  <div className="flex gap-2">
                     <a
                       href={shareLinks.facebook}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-9 h-9 flex items-center justify-center border border-gray-200 text-brighterDark hover:text-gold hover:border-gold transition-colors"
-                      aria-label="Udostępnij na Facebook"
+                      className="w-9 h-9 flex items-center justify-center bg-white border border-gold/20 text-brighterDark hover:text-gold hover:border-gold transition-colors"
+                      aria-label="Facebook"
                     >
                       <Facebook className="w-4 h-4" />
                     </a>
@@ -336,8 +480,8 @@ export default function PostDetailClient({
                       href={shareLinks.twitter}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-9 h-9 flex items-center justify-center border border-gray-200 text-brighterDark hover:text-gold hover:border-gold transition-colors"
-                      aria-label="Udostępnij na Twitter"
+                      className="w-9 h-9 flex items-center justify-center bg-white border border-gold/20 text-brighterDark hover:text-gold hover:border-gold transition-colors"
+                      aria-label="Twitter"
                     >
                       <Twitter className="w-4 h-4" />
                     </a>
@@ -345,14 +489,14 @@ export default function PostDetailClient({
                       href={shareLinks.linkedin}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-9 h-9 flex items-center justify-center border border-gray-200 text-brighterDark hover:text-gold hover:border-gold transition-colors"
-                      aria-label="Udostępnij na LinkedIn"
+                      className="w-9 h-9 flex items-center justify-center bg-white border border-gold/20 text-brighterDark hover:text-gold hover:border-gold transition-colors"
+                      aria-label="LinkedIn"
                     >
                       <Linkedin className="w-4 h-4" />
                     </a>
                     <button
                       onClick={handleCopyLink}
-                      className="w-9 h-9 flex items-center justify-center border border-gray-200 text-brighterDark hover:text-gold hover:border-gold transition-colors"
+                      className="w-9 h-9 flex items-center justify-center bg-white border border-gold/20 text-brighterDark hover:text-gold hover:border-gold transition-colors"
                       aria-label="Kopiuj link"
                     >
                       {copied ? (
@@ -362,28 +506,10 @@ export default function PostDetailClient({
                       )}
                     </button>
                   </div>
-                </div>
-
-                {post.author && (
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-primary flex items-center justify-center">
-                      <span className="text-sm text-dark font-medium">
-                        {post.author.charAt(0).toUpperCase()}
-                      </span>
-                    </div>
-                    <div>
-                      <p className="text-xs text-brighterDark font-light uppercase tracking-wider">
-                        Autor
-                      </p>
-                      <p className="text-sm font-medium text-dark">
-                        {post.author}
-                      </p>
-                    </div>
-                  </div>
-                )}
+                </motion.div>
               </div>
-            </div>
-          </motion.article>
+            </aside>
+          </div>
         </div>
 
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-primary to-transparent pointer-events-none z-10" />
@@ -391,14 +517,14 @@ export default function PostDetailClient({
 
       {/* Related Posts */}
       {otherPosts.length > 0 && (
-        <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-primary">
+        <section className="relative py-12 sm:py-20 px-4 sm:px-6 lg:px-8 bg-primary">
           <div className="max-w-6xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
-              className="text-center mb-12"
+              className="text-center mb-8 sm:mb-12"
             >
               <span className="text-xs uppercase tracking-[0.2em] text-gold font-medium">
                 Czytaj także

@@ -5,8 +5,20 @@ import Footer from '@/components/Footer';
 import ScrollToTop from '@/components/ScrollToTop';
 import PageHero from '@/components/PageHero';
 import Map from '@/components/Map';
-import { useState } from 'react';
-import { Mail, Phone, MapPin, Clock, Send } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { Mail, Phone, MapPin, Clock, Send, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
+
+declare global {
+  interface Window {
+    turnstile: {
+      render: (container: string | HTMLElement, options: Record<string, unknown>) => string;
+      reset: (widgetId: string) => void;
+      remove: (widgetId: string) => void;
+    };
+  }
+}
+
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '';
 
 export default function KontaktPage() {
   const [formData, setFormData] = useState({
@@ -17,11 +29,94 @@ export default function KontaktPage() {
     message: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [turnstileToken, setTurnstileToken] = useState('');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [statusMessage, setStatusMessage] = useState('');
+  const turnstileRef = useRef<HTMLDivElement>(null);
+  const widgetIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const renderWidget = () => {
+      if (!mounted || !turnstileRef.current || !window.turnstile) return;
+      // Clear any existing widget
+      turnstileRef.current.innerHTML = '';
+      widgetIdRef.current = window.turnstile.render(turnstileRef.current, {
+        sitekey: TURNSTILE_SITE_KEY,
+        callback: (token: string) => { if (mounted) setTurnstileToken(token); },
+        'expired-callback': () => { if (mounted) setTurnstileToken(''); },
+        theme: 'light'
+      });
+    };
+
+    // If the script is already loaded (e.g. Strict Mode remount), render directly
+    if (window.turnstile) {
+      renderWidget();
+    } else {
+      const existingScript = document.querySelector(
+        'script[src*="challenges.cloudflare.com/turnstile"]'
+      );
+      if (!existingScript) {
+        const script = document.createElement('script');
+        script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onTurnstileLoad';
+        script.async = true;
+        document.head.appendChild(script);
+      }
+      (window as unknown as Record<string, unknown>).onTurnstileLoad = renderWidget;
+    }
+
+    return () => {
+      mounted = false;
+      if (widgetIdRef.current && window.turnstile) {
+        try { window.turnstile.remove(widgetIdRef.current); } catch { /* noop */ }
+        widgetIdRef.current = null;
+      }
+      if (turnstileRef.current) {
+        turnstileRef.current.innerHTML = '';
+      }
+    };
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    alert('Dziękujemy za wiadomość! Skontaktujemy się z Tobą wkrótce.');
-    setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+
+    if (!turnstileToken) {
+      setStatus('error');
+      setStatusMessage('Potwierdź, że nie jesteś robotem.');
+      return;
+    }
+
+    setStatus('loading');
+    setStatusMessage('');
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...formData, turnstileToken })
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setStatus('success');
+        setStatusMessage('Dziękujemy za wiadomość! Skontaktujemy się z Tobą wkrótce.');
+        setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+      } else {
+        setStatus('error');
+        setStatusMessage(data.message || 'Wystąpił błąd. Spróbuj ponownie.');
+      }
+    } catch {
+      setStatus('error');
+      setStatusMessage('Nie udało się wysłać wiadomości. Sprawdź połączenie i spróbuj ponownie.');
+    }
+
+    // Reset turnstile
+    setTurnstileToken('');
+    if (widgetIdRef.current && window.turnstile) {
+      window.turnstile.reset(widgetIdRef.current);
+    }
   };
 
   const handleChange = (
@@ -68,9 +163,9 @@ export default function KontaktPage() {
                       Adres kancelarii
                     </h3>
                     <p className="text-brighterDark leading-relaxed">
-                      ul. Przykładowa 123
+                      ul. Jasna 5/1
                       <br />
-                      20-001 Lublin
+                      20-077 Lublin
                     </p>
                   </div>
                 </div>
@@ -85,10 +180,10 @@ export default function KontaktPage() {
                       Telefon
                     </h3>
                     <a
-                      href="tel:+48123456789"
+                      href="tel:+48697712128"
                       className="text-brighterDark hover:text-gold transition-colors duration-200"
                     >
-                      +48 123 456 789
+                      +48 697 712 128
                     </a>
                   </div>
                 </div>
@@ -103,10 +198,10 @@ export default function KontaktPage() {
                       Email
                     </h3>
                     <a
-                      href="mailto:kontakt@kaminska.pl"
+                      href="mailto:kancelaria.kaminska13@gmail.com"
                       className="text-brighterDark hover:text-gold transition-colors duration-200"
                     >
-                      kontakt@kaminska.pl
+                      kancelaria.kaminska13@gmail.com
                     </a>
                   </div>
                 </div>
@@ -121,9 +216,9 @@ export default function KontaktPage() {
                       Godziny otwarcia
                     </h3>
                     <p className="text-brighterDark leading-relaxed">
-                      Poniedziałek - Piątek: 9:00 - 17:00
+                      Pn - Pt: 9:00 - 17:00
                       <br />
-                      Sobota - Niedziela: Zamknięte
+                      Sb - Nd: Zamknięte
                     </p>
                   </div>
                 </div>
@@ -148,6 +243,20 @@ export default function KontaktPage() {
                   Wyślij <span className="font-semibold">wiadomość</span>
                 </h2>
               </div>
+
+              {status === 'success' && (
+                <div className="mb-6 p-4 bg-green-50 border-l-2 border-green-500 flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                  <p className="text-green-700">{statusMessage}</p>
+                </div>
+              )}
+
+              {status === 'error' && (
+                <div className="mb-6 p-4 bg-red-50 border-l-2 border-red-500 flex items-center gap-3">
+                  <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
+                  <p className="text-red-700">{statusMessage}</p>
+                </div>
+              )}
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
@@ -231,8 +340,6 @@ export default function KontaktPage() {
                     <option value="upadlosc-gospodarcza">
                       Upadłość gospodarcza
                     </option>
-                    <option value="mediacje">Mediacje</option>
-                    <option value="obsluga-firm">Obsługa firm</option>
                     <option value="inne">Inne</option>
                   </select>
                 </div>
@@ -256,19 +363,40 @@ export default function KontaktPage() {
                   />
                 </div>
 
+                {/* Cloudflare Turnstile */}
+                <div ref={turnstileRef} className="flex justify-center"></div>
+
                 <button
                   type="submit"
-                  className="relative w-full px-8 py-4 font-semibold text-dark border-2 border-gold overflow-hidden group"
+                  disabled={status === 'loading'}
+                  className="relative w-full px-8 py-4 font-semibold text-dark border-2 border-gold overflow-hidden group disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  <span className="absolute inset-0 bg-gold transition-transform duration-300 transform translate-y-full group-hover:translate-y-0"></span>
+                  <span className="absolute inset-0 bg-gold transition-transform duration-300 transform translate-y-full group-hover:translate-y-0 group-disabled:translate-y-full"></span>
                   <span className="relative z-10 flex items-center justify-center gap-2">
-                    <Send className="w-5 h-5" />
-                    Wyślij wiadomość
+                    {status === 'loading' ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Wysyłanie...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-5 h-5" />
+                        Wyślij wiadomość
+                      </>
+                    )}
                   </span>
                 </button>
 
                 <p className="text-sm text-brighterDark text-center">
                   * Pola wymagane
+                </p>
+
+                <p className="text-xs text-brighterDark/70 text-center leading-relaxed">
+                  Wysyłając formularz, wyrażasz zgodę na przetwarzanie Twoich danych osobowych
+                  w celu obsługi zapytania zgodnie z naszą{' '}
+                  <a href="/polityka-prywatnosci" className="text-gold hover:underline">
+                    Polityką Prywatności
+                  </a>.
                 </p>
               </form>
             </div>

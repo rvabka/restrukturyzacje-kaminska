@@ -115,7 +115,7 @@ export default function ListingsPageClient({
       {/* Filters Section */}
       <section className="relative py-12 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-primary to-transparent pointer-events-none"></div>
-        <div className="max-w-6xl mx-auto relative z-10">
+        <div className="max-w-6xl mx-auto relative">
           <div className="flex flex-col items-center mb-8">
             <div className="w-12 h-0.5 bg-gold mb-6"></div>
             <div className="flex flex-wrap justify-center gap-6">
@@ -152,39 +152,45 @@ export default function ListingsPageClient({
                   : 'ogłoszeń'}
             </p>
 
-            <select
-              value={currentSort}
-              onChange={e => handleSortChange(e.target.value as SortOption)}
-              className="px-4 py-2 text-sm bg-transparent text-dark focus:outline-none border-b border-gold/30 focus:border-gold cursor-pointer"
-            >
+            <div className="flex flex-wrap gap-2">
               {(Object.keys(sortLabels) as SortOption[]).map(sort => (
-                <option key={sort} value={sort}>
+                <button
+                  key={sort}
+                  onClick={() => handleSortChange(sort)}
+                  className={`px-3 py-1.5 text-xs tracking-wide transition-all duration-300 ${
+                    currentSort === sort
+                      ? 'text-gold border-b border-gold font-medium'
+                      : 'text-brighterDark hover:text-dark'
+                  }`}
+                >
                   {sortLabels[sort]}
-                </option>
+                </button>
               ))}
-            </select>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Listings Section */}
-      <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-primary overflow-hidden">
+      <section className="relative py-12 lg:py-20 px-4 sm:px-6 lg:px-8 bg-primary overflow-hidden">
         <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-white to-transparent pointer-events-none z-20"></div>
         <Image
           src="/images/backgroundDesktopRight.png"
           alt=""
           fill
+          sizes="100vw"
           className="absolute inset-0 object-cover pointer-events-none select-none hidden md:block opacity-30"
-          priority
-          quality={100}
+          loading="lazy"
+          quality={75}
         />
         <Image
           src="/images/backgroundMobileRight.png"
           alt=""
           fill
+          sizes="100vw"
           className="absolute inset-0 object-cover pointer-events-none select-none md:hidden opacity-30"
-          priority
-          quality={100}
+          loading="lazy"
+          quality={75}
         />
 
         <div className="max-w-6xl mx-auto relative z-10">

@@ -233,149 +233,170 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* Mobile Menu Overlay - Outside nav for proper stacking */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="lg:hidden fixed inset-0 bg-black/50 z-[60]"
-            onClick={() => {
-              setIsMobileMenuOpen(false);
-              setIsServicesDropdownOpen(false);
-            }}
-            aria-hidden="true"
-          />
-        )}
-      </AnimatePresence>
-
-      {/* Mobile Menu - Slide from Right */}
+      {/* Mobile Menu - Fullscreen Overlay */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
             ref={mobileMenuRef}
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'tween', duration: 0.3 }}
-            className="lg:hidden fixed top-0 right-0 bottom-0 w-[280px] sm:w-[320px] bg-white shadow-2xl z-[70] overflow-y-auto"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="lg:hidden fixed inset-0 bg-white z-[60] overflow-y-auto"
           >
-            <div className="flex items-center justify-between p-4 border-b border-gold/20">
-              <span className="text-lg font-semibold text-dark">Menu</span>
+            {/* Header */}
+            <div className="flex items-center justify-between px-4 sm:px-6 h-20">
+              <Link
+                href="/"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <Image
+                  src="/images/logo.webp"
+                  alt="Karolina Kamińska Logo"
+                  width={100}
+                  height={100}
+                  quality={100}
+                  className="object-contain"
+                />
+              </Link>
               <button
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="text-dark hover:text-gold transition-colors duration-200 p-2"
                 aria-label="Zamknij menu"
               >
-                <X size={24} />
+                <X size={28} />
               </button>
             </div>
 
-            <div className="px-4 py-6 space-y-4">
-              <Link
-                href="/"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={`block py-2 transition-colors duration-200 ${
-                  isActive('/')
-                    ? 'text-dark font-semibold border-l-[3px] border-gold pl-3 bg-gold/10'
-                    : 'text-dark font-medium hover:text-gold'
-                }`}
-              >
-                Strona Główna
-              </Link>
-
-              <div>
-                <button
-                  onClick={() =>
-                    setIsServicesDropdownOpen(!isServicesDropdownOpen)
-                  }
-                  className={`flex items-center justify-between w-full py-2 transition-colors duration-200 ${
-                    isActive('/uslugi')
-                      ? 'text-dark font-semibold border-l-[3px] border-gold pl-3 bg-gold/10'
-                      : 'text-dark font-medium hover:text-gold'
-                  }`}
-                >
-                  Usługi
-                  <ChevronDown
-                    className={`w-4 h-4 transition-transform duration-200 ${
-                      isServicesDropdownOpen ? 'rotate-180' : ''
-                    }`}
-                  />
-                </button>
-                <AnimatePresence>
-                  {isServicesDropdownOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="pl-4 space-y-2 mt-2"
+            {/* Navigation Links */}
+            <div className="flex flex-col items-center justify-center min-h-[calc(100vh-180px)] px-6">
+              <nav className="space-y-2 w-full max-w-xs">
+                {[
+                  { name: 'Strona Główna', href: '/' },
+                ].map((item, index) => (
+                  <motion.div
+                    key={item.href}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: index * 0.05 }}
+                  >
+                    <Link
+                      href={item.href}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={`block py-3 text-center text-xl font-light tracking-wide transition-colors duration-200 ${
+                        isActive(item.href)
+                          ? 'text-gold font-semibold'
+                          : 'text-dark hover:text-gold'
+                      }`}
                     >
-                      {services.map((service, index) => (
-                        <Link
-                          key={index}
-                          href={service.href}
-                          onClick={() => setIsMobileMenuOpen(false)}
-                          className="block text-dark/70 hover:text-gold transition-colors duration-200 py-2 text-sm"
-                        >
-                          {service.name}
-                        </Link>
-                      ))}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+                      {item.name}
+                    </Link>
+                  </motion.div>
+                ))}
 
-              <Link
-                href="/o-mnie"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={`block py-2 transition-colors duration-200 ${
-                  isActive('/o-mnie')
-                    ? 'text-dark font-semibold border-l-[3px] border-gold pl-3 bg-gold/10'
-                    : 'text-dark font-medium hover:text-gold'
-                }`}
-              >
-                O mnie
-              </Link>
-              <Link
-                href="/aktualnosci"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={`block py-2 transition-colors duration-200 ${
-                  isActive('/aktualnosci')
-                    ? 'text-dark font-semibold border-l-[3px] border-gold pl-3 bg-gold/10'
-                    : 'text-dark font-medium hover:text-gold'
-                }`}
-              >
-                Aktualności
-              </Link>
-              <Link
-                href="/sprzedaz"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={`block py-2 transition-colors duration-200 ${
-                  isActive('/sprzedaz')
-                    ? 'text-dark font-semibold border-l-[3px] border-gold pl-3 bg-gold/10'
-                    : 'text-dark font-medium hover:text-gold'
-                }`}
-              >
-                Sprzedaż
-              </Link>
-              <Link
-                href="/kontakt"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="flex items-center justify-center gap-2 bg-gold text-dark px-6 py-3 text-center font-semibold hover:bg-gold/90 transition-colors duration-200 mt-4 border-2 border-gold"
+                {/* Services dropdown */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: 0.05 }}
+                >
+                  <button
+                    onClick={() => setIsServicesDropdownOpen(!isServicesDropdownOpen)}
+                    className={`flex items-center justify-center gap-2 w-full py-3 text-xl font-light tracking-wide transition-colors duration-200 ${
+                      isActive('/uslugi')
+                        ? 'text-gold font-semibold'
+                        : 'text-dark hover:text-gold'
+                    }`}
+                  >
+                    Usługi
+                    <ChevronDown
+                      className={`w-5 h-5 transition-transform duration-200 ${
+                        isServicesDropdownOpen ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </button>
+                  <AnimatePresence>
+                    {isServicesDropdownOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="py-2 space-y-1">
+                          {services.map((service) => (
+                            <Link
+                              key={service.href}
+                              href={service.href}
+                              onClick={() => setIsMobileMenuOpen(false)}
+                              className={`block py-2 text-center text-base transition-colors duration-200 ${
+                                isActive(service.href)
+                                  ? 'text-gold font-medium'
+                                  : 'text-brighterDark hover:text-gold'
+                              }`}
+                            >
+                              {service.name}
+                            </Link>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+
+                {[
+                  { name: 'O mnie', href: '/o-mnie' },
+                  { name: 'Aktualności', href: '/aktualnosci' },
+                  { name: 'Sprzedaż', href: '/sprzedaz' },
+                ].map((item, index) => (
+                  <motion.div
+                    key={item.href}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: (index + 2) * 0.05 }}
+                  >
+                    <Link
+                      href={item.href}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={`block py-3 text-center text-xl font-light tracking-wide transition-colors duration-200 ${
+                        isActive(item.href)
+                          ? 'text-gold font-semibold'
+                          : 'text-dark hover:text-gold'
+                      }`}
+                    >
+                      {item.name}
+                    </Link>
+                  </motion.div>
+                ))}
+
+                {/* CTA */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: 0.3 }}
+                  className="pt-6"
+                >
+                  <Link
+                    href="/kontakt"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center justify-center gap-2 w-full py-3.5 text-dark font-semibold border-2 border-gold hover:bg-gold transition-colors duration-200"
+                  >
+                    <Phone className="w-4 h-4" />
+                    Bezpłatna konsultacja
+                  </Link>
+                </motion.div>
+              </nav>
+            </div>
+
+            {/* Footer - phone */}
+            <div className="px-6 pb-8">
+              <a
+                href="tel:+48697712128"
+                className="flex items-center justify-center gap-2 text-brighterDark hover:text-gold transition-colors duration-200 text-sm tracking-wide"
               >
                 <Phone className="w-4 h-4" />
-                Bezpłatna konsultacja
-              </Link>
-
-              {/* Phone number in mobile menu */}
-              <a
-                href="tel:+48123456789"
-                className="flex items-center justify-center gap-2 text-dark hover:text-gold transition-colors duration-200 font-medium py-3 border-t border-gold/20 mt-6"
-              >
-                <Phone className="w-5 h-5" />
-                +48 123 456 789
+                +48 697 712 128
               </a>
             </div>
           </motion.div>

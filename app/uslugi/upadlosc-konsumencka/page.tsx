@@ -65,6 +65,7 @@ export default function UpadloscKonsumenckaPage() {
           src="/images/backgroundDesktopLeft.png"
           alt=""
           fill
+          sizes="100vw"
           className="absolute inset-0 object-cover pointer-events-none select-none hidden md:block opacity-40"
           priority
           quality={100}
@@ -73,6 +74,7 @@ export default function UpadloscKonsumenckaPage() {
           src="/images/backgroundMobileLeft.png"
           alt=""
           fill
+          sizes="100vw"
           className="absolute inset-0 object-cover pointer-events-none select-none md:hidden opacity-40"
           priority
           quality={100}

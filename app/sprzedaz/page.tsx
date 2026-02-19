@@ -11,6 +11,8 @@ import {
 } from '@/src/sanity/queries';
 import ListingsPageClient from './ListingsPageClient';
 
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: 'Sprzedaż | Kancelaria Restrukturyzacyjna Karolina Kamińska',
   description:

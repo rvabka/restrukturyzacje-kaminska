@@ -10,11 +10,12 @@ interface PageHeroProps {
 
 const PageHero = ({ title, subtitle }: PageHeroProps) => {
   return (
-    <section className="relative min-h-[65vh] flex items-center justify-center bg-primary pt-20 overflow-hidden">
+    <section className="relative min-h-[50vh] md:min-h-[65vh] flex items-center justify-center bg-primary pt-20 overflow-hidden">
       <Image
         src="/images/backgroundDesktopRight.png"
         alt=""
         fill
+        sizes="100vw"
         className="absolute inset-0 object-cover pointer-events-none select-none hidden md:block"
         priority
         quality={100}
@@ -24,6 +25,7 @@ const PageHero = ({ title, subtitle }: PageHeroProps) => {
         src="/images/backgroundMobileRight.png"
         alt=""
         fill
+        sizes="100vw"
         className="absolute inset-0 object-cover pointer-events-none select-none md:hidden"
         priority
         quality={100}
@@ -52,7 +54,7 @@ const PageHero = ({ title, subtitle }: PageHeroProps) => {
                 transition={{ duration: 0.8, delay: 0.4 }}
                 className="absolute bottom-0 left-0 right-0 h-0.5 bg-gold origin-left"
               ></motion.div>
-              <h1 className="text-5xl lg:text-6xl font-light text-dark tracking-tight uppercase pb-4">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light text-dark tracking-tight uppercase pb-4">
                 {title}
               </h1>
               <motion.div

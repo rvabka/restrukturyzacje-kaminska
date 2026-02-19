@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Building2, Car, FileText, MapPin, ArrowRight } from 'lucide-react';
+import { Building2, Car, FileText, MapPin } from 'lucide-react';
 import { urlFor } from '@/src/sanity/image';
 import { ListingCard, categoryLabels } from '@/src/sanity/queries';
 import Button from './Button';
@@ -12,7 +12,7 @@ interface RecentListingsProps {
   listings: ListingCard[];
 }
 
-const categoryIcons = {
+const categoryIcons: Record<string, typeof Building2> = {
   nieruchomosci: Building2,
   ruchomosci: Car,
   wierzytelnosci: FileText
@@ -35,7 +35,7 @@ export default function RecentListings({ listings }: RecentListingsProps) {
     <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-white overflow-hidden">
       <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-primary to-transparent pointer-events-none z-10"></div>
 
-      <div className="max-w-7xl mx-auto relative z-10">
+      <div className="max-w-6xl mx-auto relative z-10">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -51,24 +51,23 @@ export default function RecentListings({ listings }: RecentListingsProps) {
           </h2>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 gap-6">
           {listings.map((listing, index) => {
-            const Icon = categoryIcons[listing.category];
+            const Icon = categoryIcons[listing.category] || FileText;
             return (
               <motion.article
                 key={listing._id}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+                transition={{ duration: 0.5, delay: index * 0.05 }}
                 className="group bg-primary border-l-2 border-gold"
               >
                 <Link
                   href={`/sprzedaz/${listing.slug.current}`}
-                  className="block"
+                  className="flex flex-col sm:flex-row"
                 >
-                  {/* Image */}
-                  <div className="relative h-48 overflow-hidden">
+                  <div className="relative w-full sm:w-48 md:w-56 h-48 sm:h-auto sm:min-h-[180px] shrink-0 overflow-hidden">
                     {listing.mainImage ? (
                       <Image
                         src={urlFor(listing.mainImage)
@@ -78,43 +77,38 @@ export default function RecentListings({ listings }: RecentListingsProps) {
                         alt={listing.mainImage.alt || listing.title}
                         fill
                         className="object-cover"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        sizes="(max-width: 640px) 100vw, 224px"
                       />
                     ) : (
-                      <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-                        <Icon className="w-12 h-12 text-gold/50" />
+                      <div className="w-full h-full bg-gray-50 flex items-center justify-center">
+                        <Icon className="w-10 h-10 text-gray-200" />
                       </div>
                     )}
-                    {/* Category badge */}
-                    <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-sm px-3 py-1.5 flex items-center gap-2">
-                      <Icon className="w-4 h-4 text-gold" />
-                      <span className="text-xs font-medium text-dark">
-                        {categoryLabels[listing.category]}
-                      </span>
-                    </div>
                   </div>
 
-                  {/* Content */}
-                  <div className="p-5">
-                    {/* Title */}
-                    <h3 className="text-base font-medium text-dark leading-snug mb-3 line-clamp-2 group-hover:text-gold transition-colors duration-300">
-                      {listing.title}
-                    </h3>
+                  <div className="p-5 flex flex-col flex-1 justify-between">
+                    <div>
+                      <span className="text-xs uppercase tracking-[0.15em] text-gold font-medium">
+                        {categoryLabels[listing.category]}
+                      </span>
+                      <h3 className="text-base font-normal text-dark mt-2 mb-2 line-clamp-2 group-hover:text-gold transition-colors">
+                        {listing.title}
+                      </h3>
 
-                    {/* Location */}
-                    {listing.location && (
-                      <div className="flex items-center gap-2 mb-3">
-                        <MapPin className="w-4 h-4 text-gold" />
-                        <span className="text-sm text-brighterDark">
-                          {listing.location}
-                        </span>
-                      </div>
-                    )}
+                      {listing.location && (
+                        <p className="flex items-center gap-2 text-sm text-brighterDark font-light mb-1">
+                          <MapPin className="w-3.5 h-3.5 text-gold" />
+                          <span className="font-normal">{listing.location}</span>
+                        </p>
+                      )}
+                    </div>
 
-                    {/* Price */}
-                    <div className="pt-4 border-t border-gold/20">
-                      <span className="text-xl font-semibold text-gold">
+                    <div className="flex items-center justify-between pt-3 mt-3 border-t border-gold/20">
+                      <span className="text-lg font-normal text-dark">
                         {formatPrice(listing.price)}
+                      </span>
+                      <span className="text-xs text-gold font-light tracking-wide opacity-0 group-hover:opacity-100 transition-opacity">
+                        Zobacz więcej →
                       </span>
                     </div>
                   </div>

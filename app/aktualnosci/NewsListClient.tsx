@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Search } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ScrollToTop from '@/components/ScrollToTop';
@@ -15,18 +15,62 @@ interface NewsListClientProps {
   posts: PostCard[];
 }
 
+type SortOption = 'date-desc' | 'date-asc';
+
+const sortLabels: Record<SortOption, string> = {
+  'date-desc': 'Najnowsze',
+  'date-asc': 'Najstarsze',
+};
+
 const POSTS_PER_PAGE = 9;
 
 export default function NewsListClient({ posts }: NewsListClientProps) {
   const [currentPage, setCurrentPage] = useState(1);
+  const [currentSort, setCurrentSort] = useState<SortOption>('date-desc');
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
+  const filteredAndSortedPosts = useMemo(() => {
+    let result = [...posts];
+
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter(
+        post =>
+          post.title.toLowerCase().includes(query) ||
+          (post.excerpt && post.excerpt.toLowerCase().includes(query))
+      );
+    }
+
+    if (currentSort === 'date-asc') {
+      result.sort(
+        (a, b) =>
+          new Date(a.publishedAt).getTime() - new Date(b.publishedAt).getTime()
+      );
+    }
+
+    return result;
+  }, [posts, currentSort, searchQuery]);
+
+  const totalPages = Math.ceil(filteredAndSortedPosts.length / POSTS_PER_PAGE);
   const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
-  const paginatedPosts = posts.slice(startIndex, startIndex + POSTS_PER_PAGE);
+  const paginatedPosts = filteredAndSortedPosts.slice(
+    startIndex,
+    startIndex + POSTS_PER_PAGE
+  );
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleSortChange = (sort: SortOption) => {
+    setCurrentSort(sort);
+    setCurrentPage(1);
+  };
+
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
+    setCurrentPage(1);
   };
 
   return (
@@ -35,18 +79,61 @@ export default function NewsListClient({ posts }: NewsListClientProps) {
 
       <PageHero title="Aktualności" subtitle="Blog i porady prawne" />
 
-      {/* Info Section */}
+      {/* Filters Section */}
       <section className="relative py-12 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-primary to-transparent pointer-events-none"></div>
-        <div className="max-w-4xl mx-auto relative z-10">
-          <div className="flex flex-col items-center text-center">
-            <div className="w-12 h-0.5 bg-gold mb-8"></div>
-            <p className="text-lg md:text-xl text-brighterDark font-light leading-relaxed">
+        <div className="max-w-6xl mx-auto relative">
+          <div className="flex flex-col items-center mb-8">
+            <div className="w-12 h-0.5 bg-gold mb-6"></div>
+            <p className="text-lg md:text-xl text-brighterDark font-light leading-relaxed text-center max-w-3xl">
               Najnowsze informacje z zakresu prawa restrukturyzacyjnego
               i&nbsp;upadłościowego. Porady, zmiany w przepisach oraz
               aktualności z&nbsp;kancelarii.
             </p>
-            <div className="w-12 h-0.5 bg-gold mt-8"></div>
+            <div className="w-12 h-0.5 bg-gold mt-6"></div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brighterDark" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={e => handleSearchChange(e.target.value)}
+                placeholder="Szukaj artykułów..."
+                className="pl-10 pr-4 py-2 text-sm bg-transparent text-dark focus:outline-none border-b border-gold/30 focus:border-gold w-64 placeholder:text-brighterDark/50"
+              />
+            </div>
+
+            <div className="flex items-center gap-6">
+              <p className="text-sm text-brighterDark font-light">
+                Znaleziono{' '}
+                <span className="font-medium text-dark">
+                  {filteredAndSortedPosts.length}
+                </span>{' '}
+                {filteredAndSortedPosts.length === 1
+                  ? 'artykuł'
+                  : filteredAndSortedPosts.length < 5
+                    ? 'artykuły'
+                    : 'artykułów'}
+              </p>
+
+              <div className="flex gap-2">
+                {(Object.keys(sortLabels) as SortOption[]).map(sort => (
+                  <button
+                    key={sort}
+                    onClick={() => handleSortChange(sort)}
+                    className={`px-3 py-1.5 text-xs tracking-wide transition-all duration-300 ${
+                      currentSort === sort
+                        ? 'text-gold border-b border-gold font-medium'
+                        : 'text-brighterDark hover:text-dark'
+                    }`}
+                  >
+                    {sortLabels[sort]}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -137,10 +224,12 @@ export default function NewsListClient({ posts }: NewsListClientProps) {
             >
               <div className="w-12 h-0.5 bg-gold mx-auto mb-8"></div>
               <h3 className="text-2xl font-light text-dark mb-4">
-                Brak artykułów
+                {searchQuery ? 'Brak wyników' : 'Brak artykułów'}
               </h3>
               <p className="text-brighterDark font-light">
-                Wkrótce pojawią się nowe wpisy na naszym blogu.
+                {searchQuery
+                  ? 'Nie znaleziono artykułów dla podanego zapytania.'
+                  : 'Wkrótce pojawią się nowe wpisy na naszym blogu.'}
               </p>
               <div className="w-12 h-0.5 bg-gold mx-auto mt-8"></div>
             </motion.div>

@@ -30,6 +30,8 @@ async function getRelatedListings(
   });
 }
 
+export const revalidate = 60;
+
 export async function generateStaticParams() {
   const slugs = await client.fetch<string[]>(allListingSlugsQuery);
   return slugs.map(slug => ({ slug }));

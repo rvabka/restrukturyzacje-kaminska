@@ -126,9 +126,9 @@ export default function ListingDetailClient({
       </div>
 
       {/* Main Content */}
-      <section className="relative py-12 px-4 sm:px-6 lg:px-8 bg-white">
+      <section className="relative py-6 sm:py-12 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-5 gap-12">
+          <div className="grid lg:grid-cols-5 gap-6 sm:gap-12">
             {/* Left Column - Images */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -351,18 +351,18 @@ export default function ListingDetailClient({
                 </p>
                 <div className="space-y-3">
                   <a
-                    href="tel:+48123456789"
+                    href="tel:+48697712128"
                     className="flex items-center gap-3 text-sm text-dark hover:text-gold transition-colors font-light"
                   >
                     <Phone className="w-4 h-4 text-gold" />
-                    +48 123 456 789
+                    +48 697 712 128
                   </a>
                   <a
-                    href="mailto:kontakt@restrukturyzacje-kaminska.pl"
+                    href="mailto:kancelaria.kaminska13@gmail.com"
                     className="flex items-center gap-3 text-sm text-dark hover:text-gold transition-colors font-light"
                   >
                     <Mail className="w-4 h-4 text-gold" />
-                    kontakt@restrukturyzacje-kaminska.pl
+                    kancelaria.kaminska13@gmail.com
                   </a>
                 </div>
                 <Button
@@ -381,12 +381,13 @@ export default function ListingDetailClient({
 
       {/* Description Section */}
       {listing.description && (
-        <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-primary overflow-hidden">
+        <section className="relative py-12 sm:py-20 px-4 sm:px-6 lg:px-8 bg-primary overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-white to-transparent pointer-events-none z-20"></div>
           <Image
             src="/images/backgroundDesktopLeft.png"
             alt=""
             fill
+            sizes="100vw"
             className="absolute inset-0 object-cover pointer-events-none select-none hidden md:block opacity-30"
             quality={100}
           />
@@ -394,6 +395,7 @@ export default function ListingDetailClient({
             src="/images/backgroundMobileLeft.png"
             alt=""
             fill
+            sizes="100vw"
             className="absolute inset-0 object-cover pointer-events-none select-none md:hidden opacity-30"
             quality={100}
           />
@@ -414,13 +416,13 @@ export default function ListingDetailClient({
       )}
 
       {relatedListings.length > 0 && (
-        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+        <section className="py-12 sm:py-20 px-4 sm:px-6 lg:px-8 bg-white">
           <div className="max-w-6xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-center mb-12"
+              className="text-center mb-8 sm:mb-12"
             >
               <span className="text-xs uppercase tracking-[0.2em] text-gold font-medium">
                 Zobacz również

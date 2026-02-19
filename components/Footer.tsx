@@ -121,27 +121,27 @@ const Footer = () => {
               <li className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-gold mt-1 flex-shrink-0" />
                 <span className="text-brighterDark text-sm">
-                  ul. Przykładowa 123
+                  ul. Jasna 5/1
                   <br />
-                  20-001 Lublin
+                  20-077 Lublin
                 </span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-gold flex-shrink-0" />
                 <a
-                  href="tel:+48123456789"
+                  href="tel:+48697712128"
                   className="text-brighterDark hover:text-gold transition-colors duration-200 text-sm"
                 >
-                  +48 123 456 789
+                  +48 697 712 128
                 </a>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-gold flex-shrink-0" />
                 <a
-                  href="mailto:kontakt@kaminska.pl"
+                  href="mailto:kancelaria.kaminska13@gmail.com"
                   className="text-brighterDark hover:text-gold transition-colors duration-200 text-sm"
                 >
-                  kontakt@kaminska.pl
+                  kancelaria.kaminska13@gmail.com
                 </a>
               </li>
             </ul>
@@ -203,18 +203,32 @@ const Footer = () => {
             </p>
             <div className="flex gap-6 text-sm">
               <Link
-                href="/"
+                href="/polityka-prywatnosci"
                 className="text-brighterDark hover:text-gold transition-colors duration-200"
               >
                 Polityka prywatności
               </Link>
               <Link
-                href="/"
+                href="/polityka-cookies"
                 className="text-brighterDark hover:text-gold transition-colors duration-200"
               >
-                Regulamin
+                Polityka cookies
               </Link>
             </div>
+          </div>
+          <div className="flex items-center justify-center gap-2 mt-4 pt-4 border-t border-gold/10">
+            <p className="text-brighterDark/60 text-xs">
+              Projekt i wykonanie
+            </p>
+            <a
+              href="https://www.linkedin.com/in/wiktor-stefaniak-4b9287279/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-xs text-brighterDark/60 hover:text-gold transition-colors duration-200"
+            >
+              <Linkedin className="w-3.5 h-3.5" />
+              Wiktor Stefaniak
+            </a>
           </div>
         </div>
       </div>

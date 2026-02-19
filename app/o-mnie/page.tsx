@@ -5,6 +5,7 @@ import Footer from '@/components/Footer';
 import ScrollToTop from '@/components/ScrollToTop';
 import PageHero from '@/components/PageHero';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Award, Target, Heart, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -194,6 +195,7 @@ export default function ONasPage() {
           src="/images/backgroundDesktopLeft.png"
           alt=""
           fill
+          sizes="100vw"
           className="absolute inset-0 object-cover pointer-events-none select-none hidden md:block opacity-40"
           priority
           quality={100}
@@ -202,6 +204,7 @@ export default function ONasPage() {
           src="/images/backgroundMobileLeft.png"
           alt=""
           fill
+          sizes="100vw"
           className="absolute inset-0 object-cover pointer-events-none select-none md:hidden opacity-40"
           priority
           quality={100}
@@ -257,6 +260,52 @@ export default function ONasPage() {
               );
             })}
           </div>
+        </div>
+      </section>
+
+      {/* Cooperation with PMR */}
+      <section className="py-32 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="mb-16 text-center"
+          >
+            <span className="text-sm uppercase tracking-[0.2em] text-gold font-semibold">
+              Partner
+            </span>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-light text-dark mt-2 tracking-tight">
+              Współpraca z{' '}
+              <span className="font-semibold">PMR Restrukturyzacje</span>
+            </h2>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-16"
+          >
+            <Link
+              href="https://pmr-restrukturyzacje.pl/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-shrink-0 group"
+            >
+              <div className="relative w-[280px] h-[100px] lg:w-[340px] lg:h-[120px]">
+                <Image
+                  src="/pmr.webp"
+                  alt="PMR Restrukturyzacje"
+                  fill
+                  className="object-contain"
+                  sizes="340px"
+                />
+              </div>
+            </Link>
+          </motion.div>
         </div>
       </section>
 
