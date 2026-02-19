@@ -304,7 +304,16 @@ function ListingCardComponent({
     switch (listing.category) {
       case 'nieruchomosci':
         const parts = [];
-        if (listing.area) parts.push(`${listing.area} m²`);
+        if (listing.area) {
+          const unitLabels: Record<string, string> = {
+            m2: 'm²',
+            ar: 'ar',
+            ha: 'ha'
+          };
+          parts.push(
+            `${listing.area} ${unitLabels[listing.areaUnit || 'm2'] || 'm²'}`
+          );
+        }
         if (listing.propertyType)
           parts.push(
             propertyTypeLabels[listing.propertyType] || listing.propertyType

@@ -73,6 +73,11 @@ function formatDate(dateString: string): string {
   });
 }
 
+function formatAreaUnit(unit?: string): string {
+  const labels: Record<string, string> = { m2: 'm²', ar: 'ar', ha: 'ha' };
+  return labels[unit || 'm2'] || 'm²';
+}
+
 export default function ListingDetailClient({
   listing,
   relatedListings
@@ -260,8 +265,8 @@ export default function ListingDetailClient({
                     {listing.area && (
                       <DetailRow
                         icon={Ruler}
-                        label="Metraż"
-                        value={`${listing.area} m²`}
+                        label="Powierzchnia"
+                        value={`${listing.area} ${formatAreaUnit(listing.areaUnit)}`}
                       />
                     )}
                     {listing.rooms && (
@@ -478,12 +483,14 @@ function DetailRow({
   value: string;
 }) {
   return (
-    <div className="flex items-center justify-between py-2 border-b border-gold/10 last:border-b-0">
-      <div className="flex items-center gap-2">
+    <div className="flex items-center justify-between gap-4 py-2 border-b border-gold/10 last:border-b-0">
+      <div className="flex items-center gap-2 shrink-0">
         <Icon className="w-4 h-4 text-gold" />
         <span className="text-sm text-brighterDark font-light">{label}</span>
       </div>
-      <span className="text-sm text-dark font-normal">{value}</span>
+      <span className="text-sm text-dark font-normal text-right break-words min-w-0">
+        {value}
+      </span>
     </div>
   );
 }

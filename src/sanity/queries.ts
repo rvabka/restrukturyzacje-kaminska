@@ -31,6 +31,7 @@ export interface ListingBase {
 export interface ListingCard extends ListingBase {
   // Dodatkowe pola dla karty
   area?: number;
+  areaUnit?: string;
   propertyType?: string;
   nominalValue?: number;
   condition?: string;
@@ -43,6 +44,7 @@ export interface ListingFull extends ListingBase {
 
   // Nieruchomości
   area?: number;
+  areaUnit?: string;
   propertyType?: string;
   rooms?: number;
   floor?: string;
@@ -95,6 +97,7 @@ const listingsProjection = `{
     hotspot
   },
   area,
+  areaUnit,
   propertyType,
   nominalValue,
   condition
@@ -164,6 +167,7 @@ export const listingBySlugQuery = groq`*[
   },
   // Nieruchomości
   area,
+  areaUnit,
   propertyType,
   rooms,
   floor,
@@ -212,6 +216,7 @@ export const relatedListingsQuery = groq`*[
   },
   location,
   area,
+  areaUnit,
   propertyType,
   nominalValue,
   condition
@@ -235,6 +240,7 @@ export const recentListingsQuery = groq`*[
   },
   location,
   area,
+  areaUnit,
   propertyType,
   nominalValue,
   condition
